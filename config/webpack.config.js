@@ -1,5 +1,6 @@
 "use strict";
 
+process.env.NODE_ENV = process.env.NODE_ENV || "development";
 const fs = require("fs");
 const path = require("path");
 const webpack = require("webpack");
@@ -71,6 +72,7 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const lessRegex = /\.(scss|less)$/;
 const lessModuleRegex = /\.module\.(scss|less)$/;
+const px2rem = require("postcss-pxtorem");
 
 const hasJsxRuntime = (() => {
 	if (process.env.DISABLE_NEW_JSX_TRANSFORM === "true") {
@@ -147,6 +149,10 @@ module.exports = function (webpackEnv) {
 									// so that it honors browserslist config in package.json
 									// which in turn let's users customize the target behavior as per their needs.
 									"postcss-normalize",
+									px2rem({
+										rootValue: 75,
+										propList: ["*"],
+									}),
 							  ]
 							: [
 									"tailwindcss",
@@ -417,6 +423,10 @@ module.exports = function (webpackEnv) {
 										require.resolve("babel-preset-react-app"),
 										{
 											runtime: hasJsxRuntime ? "automatic" : "classic",
+											targets: {
+												chrome: "49",
+												ios: "10",
+											},
 										},
 									],
 								],
